@@ -21,8 +21,10 @@ app.get('/meals', async (req, res) => {
 });
 
 app.post('/orders', async (req, res) => {
+  console.log(req.body);
   const orderData = req.body.order;
-  const data = JSON.parse(req.body);
+  // const data = JSON.parse(req.body);
+  // const orderData = data.order;
   console.log(orderData);
   if (orderData === null || orderData.items === null || orderData.items.length === 0) {
     return res

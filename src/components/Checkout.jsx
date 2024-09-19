@@ -7,6 +7,7 @@ import Modal from "./UI/Modal";
 import Button from "./UI/Button";
 import useHttp from "../hooks/useHttp";
 import Error from "./Error";
+import { send } from "vite";
 const requestConfig = {
   method: "POST",
   mode: 'no-cors',
@@ -25,6 +26,7 @@ export default function Checkout() {
     isLoading: isSending,
     error,
     sendRequest,
+    clearData
   } = useHttp("http://localhost:3000/orders", requestConfig);
 
   const cartTotal = cartCtx.items.reduce((totalPrice, item) => {
@@ -35,18 +37,24 @@ export default function Checkout() {
     userProgressCtx.hideCheckout();
   }
 
+  function handleFinish(){
+    userProgressCtx.hideCheckout();
+    cartCtx.clearCart();
+    clearData();
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     const fd = new FormData(event.target);
     const customerData = Object.fromEntries(fd.entries());
-
-    sendRequest(JSON.stringify({
+    const sendData = JSON.stringify({
       order: {
         items: cartCtx.items,
         customer: customerData,
       },
-    })
-    );
+    });
+    // console.log(sendData);
+    sendRequest(sendData);
   }
 
   let actions = (
@@ -71,7 +79,7 @@ export default function Checkout() {
         <p>Your order was submitted successfully.</p>
         <p>Some words to say</p>
         <p className="modal-actions">
-          <Button onClick={handleClose}>Okay</Button>
+          <Button onClick={handleFinish}>Okay</Button>
         </p>
       </Modal>
     );
